@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Old PC, New Job</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23ff7a3d'/%3E%3Crect x='13' y='14' width='38' height='28' rx='5' fill='%23fff7ef'/%3E%3Ccircle cx='26' cy='26' r='2.6' fill='%232b1a10'/%3E%3Ccircle cx='38' cy='26' r='2.6' fill='%232b1a10'/%3E%3Cpath d='M25 33q7 5 14 0' fill='none' stroke='%232b1a10' stroke-width='2.6' stroke-linecap='round'/%3E%3Crect x='26' y='42' width='12' height='5' fill='%23fff7ef'/%3E%3Crect x='19' y='47' width='26' height='4' rx='2' fill='%23fff7ef'/%3E%3C/svg%3E">
+<meta name="description" content="Que faire de son vieux PC ? Le transformer en agent IA qui pilote tes projets, depuis ton téléphone ou n'importe quel ordinateur. Le mien fait tourner onze agents IA 24 h/24. Voici comment, étape par étape.">
+<script>
+  // Intro jouée une fois par visite (et jamais si « réduire les animations » est activé)
+  (function () {
+    var vu = false;
+    try { vu = étapeStorage.getItem("intro-vue") === "1"; } catch (e) {}
+    if (!vu && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      var h = document.documentElement;
+      h.classList.add("intro");
+      window.__introT0 = performance.now();
+      try { étapeStorage.setItem("intro-vue", "1"); } catch (e) {}
+      // filet : même si le JavaScript arrive en retard, la page s'ouvre à 2,1 s
+      setTimeout(function () { h.classList.remove("intro"); }, 2100);
+    }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Space+Grotesk:wght@300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=48">
+</head>
+<body>
+<!-- INTRO : le feu de Gérard -->
+<div id="intro" aria-hidden="true">
+  <div class="intro-in">
+    <div class="crt"><div class="crt-ecran"><span class="crt-ligne"></span><span class="crt-txt">&gt; vieux_pc --new-job<i></i></span></div><div class="crt-pied"></div></div>
+    <p class="intro-txt"><span>Old PC</span>, New Job</p>
+  </div>
+  <button class="intro-skip" type="button">Passer</button>
+</div>
+
+<!-- curseur maison (ordi seulement) -->
+<div class="cur" aria-hidden="true"><div class="cur-dot"></div><div class="cur-ring"><span class="cur-lbl"></span></div></div>
+
+<div class="progress" aria-hidden="true"><span></span></div>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="logo" href="#top" aria-label="Retour en haut"><span class="logo-dot"></span>Old PC, New Job</a>
+    <nav aria-label="Sections">
+      <a href="#agent-ia">C'est quoi ?</a>
+      <a href="#avant">Avant / après</a>
+      <a href="#fil-etapes">Le fil</a>
+      <a href="#agents">Les agents</a>
+      <a href="parcours.html">Le parcours</a>
+      <a href="commencer.html">Commencer</a>
+    </nav>
+    <a class="btn sm magnet" href="parcours.html"><span>Le parcours</span></a>
+  </div>
+</header>
+
+<main id="top">
+  <!-- le fil de Gérard : dessiné par-dessus toute la page, derrière le contenu -->
+  <svg id="fil" aria-hidden="true">
+    <defs>
+      <linearGradient id="filgrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1000">
+        <stop offset="0" stop-color="#FFC53D"/><stop offset=".5" stop-color="#FF6BA8"/><stop offset="1" stop-color="#A78BFA"/>
+      </linearGradient>
+      <filter id="filglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+    </defs>
+    <g id="filTracks"></g>
+    <g id="filPaths"></g>
+    <g id="filStops"></g>
+    <g id="filHead"><circle r="14" class="halo"/><circle r="4.5" class="core"/></g>
+  </svg>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true">
+      <canvas id="gl"></canvas>
+      <div class="glow g1"></div><div class="glow g2"></div><div class="grid"></div>
+    </div>
+    <div class="wrap hero-in">
+      <div class="hero-txt">
+        <p class="eyebrow" data-hero><span class="live"></span>Mon agent tourne sur mon MacBook i3, allumé 24 h/24</p>
+        <h1 class="kin"><span class="line">Transforme ton vieil ordi</span><span class="line">en <em class="grad">agent&nbsp;IA.</em></span></h1>
+        <p class="lead" data-hero>Et pilote tes projets avec Claude, depuis ton téléphone ou n'importe quel ordinateur, où que tu sois.</p>
+        <div class="hero-cta" data-hero>
+          <a class="btn magnet" href="parcours.html"><span>Voir le parcours</span></a>
+          <a class="btn ghost magnet" href="#agent-ia"><span>C'est quoi un agent IA ?</span></a>
+        </div>
+      </div>
+
+      <div class="robot" data-hero data-fil="depart" role="img" aria-label="Un vieil ordinateur qui se transforme en robot entouré d'agents" title="Clique pour rejouer la transformation">
+        <svg viewBox="0 0 200 210" shape-rendering="crispEdges" aria-hidden="true">
+          <ellipse id="rbOmbre" cx="100" cy="198" rx="44" ry="5" fill="#0F2A5F" opacity=".12" shape-rendering="auto"/>
+          <g id="rbOrbite"></g>
+          <g id="rbCorps">
+            <g id="rbFlamme"><rect x="74" y="178" width="10" height="8" fill="#7DD3FC"/><rect x="76" y="186" width="6" height="6" fill="#38BDF8"/>
+              <rect x="116" y="178" width="10" height="8" fill="#7DD3FC"/><rect x="118" y="186" width="6" height="6" fill="#38BDF8"/></g>
+            <g id="rbJambes"><rect x="76" y="136" width="6" height="34" fill="#94A3B8"/><rect x="118" y="136" width="6" height="34" fill="#94A3B8"/>
+              <rect x="70" y="168" width="18" height="10" fill="#1E3A8A"/><rect x="112" y="168" width="18" height="10" fill="#1E3A8A"/></g>
+            <g id="rbBrasG"><rect x="28" y="72" width="22" height="6" fill="#94A3B8"/><rect x="22" y="60" width="8" height="18" fill="#94A3B8"/>
+              <rect x="16" y="52" width="8" height="10" fill="#1E3A8A"/><rect x="28" y="52" width="8" height="10" fill="#1E3A8A"/></g>
+            <g id="rbBrasD"><rect x="150" y="72" width="22" height="6" fill="#94A3B8"/><rect x="170" y="60" width="8" height="18" fill="#94A3B8"/>
+              <rect x="164" y="52" width="8" height="10" fill="#1E3A8A"/><rect x="176" y="52" width="8" height="10" fill="#1E3A8A"/></g>
+            <g id="rbAntenne"><rect x="98" y="22" width="4" height="20" fill="#64748B"/><rect x="93" y="12" width="14" height="12" fill="#38BDF8"/><rect x="96" y="15" width="4" height="4" fill="#E0F2FE"/></g>
+            <g id="rbMoniteur">
+              <rect x="48" y="40" width="104" height="80" fill="#E7E1CF"/><rect x="48" y="112" width="104" height="8" fill="#D3CBB4"/>
+              <rect x="58" y="48" width="84" height="58" fill="#CDC5AE"/>
+              <rect id="rbEcran" x="62" y="52" width="76" height="50" fill="#12233F"/>
+              <g id="rbDos"><rect x="68" y="58" width="2" height="6" fill="#4ADE80"/><rect x="72" y="58" width="2" height="6" fill="#4ADE80"/><rect x="76" y="60" width="4" height="2" fill="#4ADE80"/>
+                <rect class="rb-curseur" x="82" y="58" width="5" height="6" fill="#4ADE80"/></g>
+              <g id="rbYeux"><rect class="rb-oeil" x="76" y="64" width="14" height="14" fill="#7DD3FC"/><rect class="rb-oeil" x="110" y="64" width="14" height="14" fill="#7DD3FC"/>
+                <rect x="80" y="68" width="5" height="5" fill="#E0F2FE"/><rect x="114" y="68" width="5" height="5" fill="#E0F2FE"/>
+                <rect x="88" y="88" width="24" height="4" fill="#7DD3FC"/><rect x="84" y="86" width="4" height="4" fill="#7DD3FC"/><rect x="112" y="86" width="4" height="4" fill="#7DD3FC"/></g>
+              <rect x="128" y="110" width="6" height="4" fill="#22C55E"/><rect x="62" y="110" width="30" height="2" fill="#BDB49A"/>
+              <rect x="86" y="120" width="28" height="8" fill="#D3CBB4"/><rect x="72" y="128" width="56" height="8" fill="#E7E1CF"/>
+            </g>
+            <g id="rbClavier"><rect x="46" y="140" width="108" height="18" fill="#E7E1CF"/><rect x="46" y="154" width="108" height="4" fill="#D3CBB4"/>
+              <g fill="#CDC5AE"><rect x="52" y="143" width="8" height="4"/><rect x="62" y="143" width="8" height="4"/><rect x="72" y="143" width="8" height="4"/><rect x="82" y="143" width="8" height="4"/><rect x="92" y="143" width="8" height="4"/><rect x="102" y="143" width="8" height="4"/><rect x="112" y="143" width="8" height="4"/><rect x="122" y="143" width="8" height="4"/><rect x="132" y="143" width="8" height="4"/><rect x="142" y="143" width="6" height="4"/>
+              <rect x="56" y="149" width="8" height="4"/><rect x="66" y="149" width="56" height="4"/><rect x="124" y="149" width="8" height="4"/><rect x="134" y="149" width="12" height="4"/></g></g>
+          </g>
+        </svg>
+        <span class="rb-chip c1">range tes idées</span>
+        <span class="rb-chip c2">te tient à jour</span>
+        <span class="rb-chip c3">veille la nuit</span>
+        <span class="rb-etiquette">avant : un vieux PC · après : ton agent IA</span>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="band" aria-hidden="true"><div class="band-track" id="band"></div></div>
+
+  <!-- C'EST QUOI UN AGENT IA ? -->
+  <section class="sec" id="agent-ia">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow" data-reveal>Pour commencer</p>
+        <h2 class="kin"><span class="line">C'est quoi, <span class="grad">un agent IA ?</span></span></h2>
+        <p class="sub" data-reveal>Un agent IA, c'est un petit assistant qui vit sur ton ordinateur. Tu lui parles normalement, en français, et il agit à ta place.</p>
+      </div>
+      <div class="quoi-agent">
+        <article class="qa-carte" data-reveal><span class="qa-n">1</span><h3>Il comprend</h3><p>Tu lui écris ou tu lui envoies un vocal, comme à un ami. Pas de commande à apprendre.</p></article>
+        <article class="qa-carte" data-reveal><span class="qa-n">2</span><h3>Il agit</h3><p>Il range une idée, cherche une info, écrit un résumé, te prévient. Il ne fait pas que répondre : il fait.</p></article>
+        <article class="qa-carte" data-reveal><span class="qa-n">3</span><h3>Il travaille tout seul</h3><p>Il tourne 24 h/24 sur ton vieux PC, même quand tu dors, et il se souvient de ce que tu lui as confié.</p></article>
+      </div>
+      <div class="qa-exemple" data-reveal>
+        <p class="qa-titre">À quoi ça ressemble, sur le téléphone</p>
+        <div class="qa-dialogue">
+          <p class="qa-moi">Tu te souviens de l'idée sur les recettes rapides&nbsp;?</p>
+          <p class="qa-lui"><b>Ton agent</b>Oui : tu me l'as envoyée mardi avec un lien. Je te la remets, avec tes notes.</p>
+          <p class="qa-moi">Rappelle-moi samedi de m'y mettre.</p>
+          <p class="qa-lui"><b>Ton agent</b>C'est noté, je te préviens samedi à 9 h.</p>
+        </div>
+        <p class="qa-diff">La différence avec une conversation avec ChatGPT ou Claude : un agent n'attend pas que tu ouvres une appli. Il a ses outils (tes notes, tes messages, internet), il garde ses souvenirs, et il peut agir de lui-même au bon moment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- AVANT / APRÈS -->
+  <section class="sec" id="avant">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow" data-reveal>Avant / après</p>
+        <h2 class="kin"><span class="line">Le même PC, <span class="grad">une autre vie.</span></span></h2>
+      </div>
+      <div class="ba">
+        <article class="ba-card avant" data-reveal>
+          <span class="ba-tag">Avant</span>
+          <h3>Un vieux PC</h3>
+          <ul>
+            <li>Un processeur lent, peu de mémoire</li>
+            <li>Rangé, presque jamais allumé</li>
+          </ul>
+        </article>
+        <div class="ba-fleche" aria-hidden="true"><svg viewBox="0 0 120 24"><path id="baTrait" d="M2 12 H110"/><path id="baPointe" d="M100 3 L112 12 L100 21"/></svg></div>
+        <article class="ba-card apres" data-reveal>
+          <span class="ba-tag">Après</span>
+          <h3>Un petit serveur à la maison</h3>
+          <ul>
+            <li>Allumé 24 h/24, silencieux</li>
+            <li>Onze agents joignables sur Telegram</li>
+            <li>Une ville en pixel-art et un tableau de bord pour tout suivre</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMENT ÇA MARCHE -->
+  <section class="sec" id="marche">
+    <div class="marche-pin">
+      <div class="wrap marche">
+        <div class="marche-txt">
+          <p class="eyebrow" data-reveal>Comment ça marche</p>
+          <h2 class="kin"><span class="line">Un message,</span><span class="line"><span class="grad">le bon agent.</span></span></h2>
+          <ol class="steps" id="steps">
+            <li data-reveal><span class="n">1</span><div><b>Tu écris</b><p>En texte ou en vocal, comme à une collègue. Pas de commande à retenir.</p></div></li>
+            <li data-reveal><span class="n">2</span><div><b>Gérard aiguille</b><p>Il reconnaît le prénom, le sujet ou le lien, et choisit le bon agent. Souvent sans IA du tout.</p></div></li>
+            <li data-reveal><span class="n">3</span><div><b>L'agent répond et signe</b><p>Tu sais toujours qui t'a répondu. Une demande en plusieurs morceaux ? Un agent chef d'orchestre répartit.</p></div></li>
+          </ol>
+          <div class="scene-bar" aria-hidden="true"><span id="sceneFill"></span><em id="sceneLbl">1 / 3</em></div>
+        </div>
+        <div class="net-wrap" data-reveal>
+          <p class="net-cap" id="netCap" aria-live="off">&nbsp;</p>
+          <svg class="net" id="net" viewBox="0 0 520 440" role="img" aria-label="Gérard au centre, relié aux dix autres agents">
+            <defs><radialGradient id="hubglow"><stop offset="0" stop-color="#FFC53D" stop-opacity=".45"/><stop offset="1" stop-color="#FFC53D" stop-opacity="0"/></radialGradient></defs>
+            <g id="lines"></g><g id="hot"></g>
+            <circle id="hubhalo" cx="260" cy="220" r="70" fill="url(#hubglow)"/>
+            <g id="nodes"></g>
+            <circle class="packet" id="p1" r="7" cx="260" cy="-10"/><circle class="packet" id="p2" r="4.5" cx="260" cy="-10"/><circle class="packet" id="p3" r="4.5" cx="260" cy="-10"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LE FIL EN 6 ÉTAPES -->
+  <section class="sec alt" id="fil-etapes">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow" data-reveal>Le fil conducteur</p>
+        <h2 class="kin"><span class="line">Une étape, <span class="grad">une brique.</span></span></h2>
+        <p class="sub" data-reveal>11 étapes, un petit projet à chaque fois (de 15 à 45 minutes avec Claude, environ 5 h en tout), en trois parties. Le détail de chaque étape est dans le parcours.</p>
+      </div>
+      <ol class="actes" id="actes"></ol>
+      <div class="actes-cta" data-reveal><a class="btn magnet" href="parcours.html"><span>Tout le parcours, étape par étape</span></a></div>
+    </div>
+  </section>
+
+  <!-- AGENTS -->
+  <section class="sec alt" id="agents">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow" data-reveal>Tes agents</p>
+        <h2 class="kin"><span class="line">Tes agents,</span><span class="line"><span class="grad">c'est toi qui choisis.</span></span></h2>
+        <p class="sub" data-reveal>Voici des idées de métiers d'agents. Garde ceux qui te servent, oublie les autres, invente les tiens, et donne-leur le prénom que tu veux. Claude les construit avec toi, un par un.</p>
+      </div>
+      <div class="cards" id="cards"></div>
+    </div>
+  </section>
+
+  <!-- 24 H : le ciel passe de la nuit au jour puis à la nuit -->
+  <section class="sec" id="journee">
+    <div class="sky" aria-hidden="true">
+      <div class="sky-sticky"><div class="astre soleil"></div><div class="astre lune"></div><div class="etoiles"></div></div>
+    </div>
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow" data-reveal>Pendant que tu dors</p>
+        <h2 class="kin"><span class="line">24 h dans <span class="grad">le quartier.</span></span></h2>
+      </div>
+      <div class="tl" id="tl"><div class="tl-line"><span id="tlFill"></span></div></div>
+    </div>
+  </section>
+
+  <!-- CHIFFRES -->
+  <section class="sec alt" id="chiffres">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow" data-reveal>En vrai</p>
+        <h2 class="kin"><span class="line">Pas cher, <span class="grad">pas lourd.</span></span></h2>
+      </div>
+      <div class="stats">
+        <div class="stat" data-reveal><b class="roll" data-val="11">11</b><span>agents en service</span></div>
+        <div class="stat" data-reveal><b class="roll" data-val="11">11</b><span>étapes dans le guide</span></div>
+        <div class="stat" data-reveal><b class="roll" data-val="388">388</b><span>appels à l'IA au total</span></div>
+      </div>
+      <p class="fine" data-reveal>Ce qui peut se faire sans IA se fait sans IA : la Mairie, Amélio et les menus n'appellent jamais l'IA.</p>
+    </div>
+  </section>
+
+  <!-- FIN -->
+  <section class="sec cta">
+    <div class="wrap">
+      <div class="crowd" id="crowd" data-fil="arrivee"></div>
+      <h2 class="kin"><span class="line">Et ton vieux PC,</span><span class="line"><span class="grad">il fait quoi&nbsp;?</span></span></h2>
+      <p class="sub" data-reveal>Pas besoin d'être développeuse. Il faut surtout un peu de curiosité et une étape de temps en temps.</p>
+      <ul class="conseils">
+        <li data-reveal><b>Un ancien ordinateur</b><span>Même lent : il ne réfléchit pas, il orchestre. L'IA tourne ailleurs.</span></li>
+        <li data-reveal><b>Claude Code</b><span>Je décris ce que je veux en français, il écrit le code avec moi.</span></li>
+        <li data-reveal><b>Telegram</b><span>Pour parler aux agents depuis mon téléphone, où que je sois.</span></li>
+        <li data-reveal><b>Un peu de patience</b><span>Une brique par étape, notée dans un journal. Le reste se construit tout seul.</span></li>
+      </ul>
+      <div class="hero-cta" data-reveal style="justify-content:center"><a class="btn magnet" href="commencer.html"><span>Commencer sans rien installer</span></a><a class="btn ghost magnet" href="parcours.html"><span>Voir comment j'ai fait</span></a></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot"><div class="wrap foot-in"><span>Labo IA de Maddy · Paris</span><span>Fait avec Claude Code, UI/UX Pro Max et GSAP</span></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="agents.js?v=48"></script>
+<script src="parcours.js?v=48"></script>
+<script src="main.js?v=48"></script>
+</body>
+</html>

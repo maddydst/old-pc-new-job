@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Snow Warehouse</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%2329b5e8'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round'%3E%3Cpath d='M32 12v40M14.7 22l34.6 20M14.7 42l34.6-20'/%3E%3Cpath d='M26 16l6 6 6-6M26 48l6-6 6 6M12.5 29l8.2 2.2-2.2 8.2M51.5 35l-8.2-2.2 2.2-8.2'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+/* Bleu Snowflake pour le Warehouse, vert Echo pour son chat. Plat, coins ronds, SF. Données 100 % fictives. */
+:root{
+  /* Le Warehouse en bleu Snowflake ; seul le chat Echo (en bas) est dans le vert d'Echo (Maddy, 18/11) */
+  --bg:#f2f6f8; --bg2:#e8eff3; --card:#ffffff; --ink:#15212b; --muted:#5f6f7b; --faint:#9eabb5; --line:#dde6ec;
+  --blue:#29b5e8; --blue-ink:#1689b5; --blue-soft:#e3f4fb; --navy:#11567f; --orange:#c7782a; --orange-soft:#fbefe1; --red:#b5452a; --green:#2f7d5b;
+  --echo:#2f6f5f; --echo-soft:#dcefe6; --echo-ink:#1f4f44; --echo-bg:#f1f6f1;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  --ease:cubic-bezier(.22,1,.36,1); --spring:cubic-bezier(.3,1.45,.5,1); --r:16px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+body{display:flex;flex-direction:column;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+svg{display:block}
+.k{font-size:11px;font-weight:650;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+
+/* barre du haut */
+.top{display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--card);flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em;font-size:15px}
+.logo svg{width:26px;height:26px;color:var(--blue)}
+.crumb{display:flex;gap:6px;align-items:center;color:var(--muted);font:12.5px var(--mono)}
+.crumb i{color:var(--faint);font-style:normal}
+.who{margin-left:auto;display:flex;align-items:center;gap:10px;background:var(--blue-soft);border-radius:999px;padding:4px 12px 4px 4px;font-size:13px}
+.who .av{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700}
+.who b{font-weight:600} .who small{color:var(--blue-ink);font:11.5px var(--mono)}
+.who .dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.back{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;padding:6px 12px;font-size:13px;color:var(--muted)}
+.back svg{width:14px;height:14px}
+
+.app{flex:1;min-height:0;display:grid;grid-template-columns:290px minmax(0,1fr)}
+/* arbre */
+.side{border-right:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;min-height:0}
+.search{margin:12px;display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:7px 10px;color:var(--faint)}
+.search input{border:0;outline:none;flex:1;font:inherit;color:var(--ink);background:transparent}
+.search svg{width:15px;height:15px}
+.tree{flex:1;overflow:auto;padding:0 8px 12px}
+.db{display:flex;align-items:center;gap:8px;font:600 12.5px var(--mono);padding:6px 8px;color:var(--navy)}
+.db svg{width:15px;height:15px;color:var(--blue)}
+details.sch>summary{list-style:none;display:flex;align-items:center;gap:8px;padding:5px 8px 5px 18px;border-radius:8px;cursor:pointer;font:12.5px var(--mono);color:var(--ink)}
+details.sch>summary::-webkit-details-marker{display:none}
+details.sch>summary:hover{background:var(--bg)}
+details.sch>summary .chev{width:12px;height:12px;color:var(--faint);transition:transform .3s var(--ease)}
+details.sch[open]>summary .chev{transform:rotate(90deg)}
+details.sch>summary em{margin-left:auto;font-style:normal;color:var(--faint);font-size:11.5px}
+.obj{display:flex;align-items:center;gap:8px;width:100%;padding:5px 8px 5px 38px;border-radius:8px;font:12.5px var(--mono);text-align:left}
+.obj svg{width:14px;height:14px;color:var(--blue-ink);flex:none}
+.obj:hover{background:var(--bg)}
+.obj.on{background:var(--blue-soft);color:var(--navy);font-weight:600}
+.obj.lk{color:var(--faint)} .obj.lk svg{color:var(--faint)}
+.obj em{margin-left:auto;font-style:normal;color:var(--faint);font-size:11px}
+.allj{margin:0 12px 12px;border:1px solid var(--blue);color:var(--blue-ink);border-radius:10px;padding:8px;font-weight:600;font-size:13px;display:flex;gap:8px;align-items:center;justify-content:center}
+.allj svg{width:15px;height:15px}
+
+/* objet */
+.main{display:flex;flex-direction:column;min-height:0;padding:16px 20px 18px}
+.head{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.head h1{margin:0;font:600 20px/1.2 var(--mono);letter-spacing:-.01em;word-break:break-all}
+.head h1 span{color:var(--faint)}
+.head p{margin:4px 0 0;color:var(--muted)}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.bd{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:2px 9px;background:var(--bg2);color:var(--muted)}
+.bd.b{background:var(--blue-soft);color:var(--blue-ink)} .bd.s{background:var(--orange-soft);color:var(--orange)}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);width:min(620px,100%);background:var(--bg2);border-radius:12px;padding:3px;position:relative;margin:14px 0 12px}
+.tabs button{padding:7px 6px;border-radius:9px;font-size:13px;color:var(--muted);position:relative;z-index:1;display:flex;gap:6px;align-items:center;justify-content:center;transition:color .25s}
+.tabs button svg{width:15px;height:15px}
+.tabs button[aria-selected="true"]{color:var(--ink);font-weight:650}
+.tabs button:disabled{opacity:.4;cursor:default}
+.tabs .thumb{position:absolute;top:3px;bottom:3px;left:3px;width:calc(20% - 1.2px);border-radius:9px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);transition:transform .45s var(--spring)}
+.panel{flex:1;min-height:0;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:auto;position:relative}
+.grid{border-collapse:collapse;font:12.5px var(--mono);width:max-content;min-width:100%}
+.grid th{position:sticky;top:0;background:#f6f9fb;text-align:left;font-weight:600;padding:8px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.grid th small{display:block;color:var(--faint);font-weight:400;font-size:10.5px}
+.grid td{padding:6px 12px;border-bottom:1px solid #eef3f6;white-space:nowrap}
+.grid td.n{color:var(--faint)} .grid tr:hover td{background:#f8fbfd}
+.lock{height:100%;display:grid;place-items:center;text-align:center;color:var(--muted);padding:30px}
+.lock svg{width:34px;height:34px;color:var(--faint);margin:0 auto 10px}
+.lock b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+.cols{padding:6px 16px}
+.col{display:grid;grid-template-columns:minmax(140px,220px) 110px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid #eef3f6;align-items:center;font-size:13px}
+.col b{font:600 12.5px var(--mono)} .col span{font:12px var(--mono);color:var(--muted)}
+.lnk{display:flex;flex-wrap:wrap;gap:5px}
+.lnk i{font-style:normal;font:11px var(--mono);background:var(--blue-soft);color:var(--blue-ink);border-radius:6px;padding:1px 7px}
+.lnk i.nn{background:var(--orange-soft);color:var(--orange)}
+.svgw{padding:14px;height:100%;display:flex;flex-direction:column}
+.svgw svg{flex:1;width:100%;min-height:240px}
+.nd rect{fill:var(--card);stroke:var(--line);stroke-width:1.5}
+.nd.me rect{fill:var(--blue-soft);stroke:var(--blue)}
+.nd.v rect{stroke:var(--blue);stroke-dasharray:4 3}
+.nd.lk rect{fill:#f3f6f8;stroke:var(--faint);stroke-dasharray:3 3}
+.nd text{font:600 12px var(--mono);fill:var(--ink)} .nd text.c{font:10.5px var(--font);fill:var(--muted)}
+.nd.lk text{fill:var(--faint)}
+.nd{cursor:pointer}
+path.fl{fill:none;stroke:var(--blue);stroke-width:1.6;stroke-dasharray:6 6;animation:flow 1.2s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-12}}
+line.ed{stroke:var(--blue);stroke-width:1.6}
+.note{color:var(--muted);font-size:13px;padding:2px 2px 0}
+.joins{padding:6px 16px}
+.jn{display:grid;grid-template-columns:1fr auto;gap:4px 14px;padding:11px 0;border-bottom:1px solid #eef3f6;align-items:center}
+.jn .q{font:12.5px var(--mono)} .jn .q b{font-weight:600}
+.jn .q i{font-style:normal;color:var(--faint);margin:0 8px}
+.card{font-size:11px;font-weight:700;border-radius:999px;padding:2px 9px;background:var(--blue-soft);color:var(--blue-ink);font-family:var(--mono)}
+.card.nn{background:var(--orange-soft);color:var(--orange)}
+.jn small{grid-column:1/-1;color:var(--muted);font-size:12.5px}
+.jn small.w{color:var(--orange)}
+.conf{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
+.conf u{display:block;width:70px;height:5px;border-radius:3px;background:var(--bg2);position:relative;overflow:hidden;text-decoration:none}
+.conf u::after{content:"";position:absolute;inset:0;width:var(--w);background:var(--blue);border-radius:3px}
+.sql{font:12px/1.55 var(--mono);white-space:pre-wrap;background:#f6f9fb;border-radius:12px;padding:12px 14px;margin:12px 0 0;color:var(--navy);max-height:200px;overflow:auto}
+.gate{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;z-index:9;text-align:center;padding:24px}
+.gate svg{width:46px;height:46px;color:var(--blue);margin:0 auto 14px}
+.gate h1{margin:0 0 6px;font-size:24px;letter-spacing:-.02em}
+.gate p{color:var(--muted);margin:0 0 18px}
+.gate a{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;text-decoration:none;border-radius:12px;padding:10px 18px;font-weight:600}
+/* le chat SQL, sous les tables */
+.dock{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.ask{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 6px 6px 12px;transition:border-color .3s}
+.ask{border-color:var(--echo-soft)} .ask:focus-within{border-color:var(--echo)}
+.ai{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--echo);border-radius:999px;padding:2px 9px;flex:none}
+.ask input{flex:1;border:0;outline:none;font:inherit;background:transparent;color:var(--ink);min-width:0}
+.ib{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--echo);flex:none}
+.ib svg{width:17px;height:17px} .ib.go{background:var(--echo);color:#fff}
+.ib.live{background:var(--red);color:#fff;animation:clig .9s infinite alternate}
+@keyframes clig{to{opacity:.55}}
+.res{background:var(--card);border:1px solid var(--echo-soft);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:8px;max-height:46vh;animation:monte .45s var(--ease)}
+@keyframes monte{from{opacity:0;transform:translateY(10px)}}
+.rh{display:flex;align-items:center;gap:10px;font-size:13.5px}
+.rh #rexp{flex:1;color:var(--ink)}
+.rh button{width:28px;height:28px;border-radius:50%;color:var(--muted)}
+.sqlbox{display:flex;gap:8px;align-items:stretch}
+.sqlbox textarea{flex:1;min-height:58px;max-height:140px;resize:vertical;border:1px solid var(--echo-soft);border-radius:10px;padding:8px 10px;font:12.5px/1.5 var(--mono);color:var(--echo-ink);background:var(--echo-bg);outline:none}
+.sqlbox textarea:focus{border-color:var(--echo)}
+.sqlbox button{width:40px;border-radius:10px;background:var(--echo-soft);color:var(--echo);display:grid;place-items:center}
+.sqlbox button svg{width:15px;height:15px}
+.rmeta{font-size:12px;color:var(--muted)} .rmeta.err{color:var(--red);font-family:var(--mono)}
+.rgrid{overflow:auto;min-height:0;border-top:1px solid var(--line)}
+.dock.wait .ask{opacity:.6;pointer-events:none}
+@media (max-width:860px){body{overflow:auto}.app{grid-template-columns:1fr}.side{max-height:40vh;border-right:0;border-bottom:1px solid var(--line)}.panel{min-height:60vh}.tabs button span{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="gate" id="gate" hidden>
+  <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5M3 10.4l3.4.9-.9 3.4M21 13.6l-3.4-.9.9-3.4M3.9 14.3l2.5.9M20.1 9.7l-2.5-.9"/></svg>
+  <h1>Snow Warehouse</h1><p>Connecte-toi avec Echo : ta voix t'ouvre les tables de ton niveau d'accès.</p>
+  <a href="../?retour=entrepot">Se connecter avec Echo</a></div>
+</div>
+
+<div class="top">
+  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/></svg>Snow Warehouse</div>
+  <div class="crumb" id="crumb"></div>
+  <div class="who" id="who"></div>
+  <a class="back" id="back" href="../"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>Echo</a>
+</div>
+<div class="app">
+  <aside class="side">
+    <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="q" placeholder="Chercher une table ou une vue" autocomplete="off"></label>
+    <div class="tree" id="tree"></div>
+    <button class="allj" id="allj"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8.5 8.5l7 7"/></svg>Toutes les jointures détectées</button>
+  </aside>
+  <main class="main">
+    <div class="head" id="head"></div>
+    <div class="tabs" id="tabs"><span class="thumb" id="thumb"></span>
+      <button data-t="donnees" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg><span>Données</span></button>
+      <button data-t="colonnes" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Colonnes</span></button>
+      <button data-t="lineage" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="6" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="12" r="2.5"/><path d="M7.5 6.5C12 7 12 12 16.5 12M7.5 17.5C12 17 12 12 16.5 12"/></svg><span>Lineage</span></button>
+      <button data-t="etoile" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="6" height="6" rx="1.5"/><path d="M12 9V3M12 15v6M9 12H3M15 12h6"/></svg><span>Étoile</span></button>
+      <button data-t="jointures" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8.5 8.5l7 7"/></svg><span>Jointures</span></button>
+    </div>
+    <div class="panel" id="panel"></div>
+    <div class="dock" id="dock">
+      <div class="res" id="res" hidden>
+        <div class="rh"><span class="ai">Echo</span><span id="rexp"></span><button id="rclose" aria-label="Fermer le résultat">✕</button></div>
+        <div class="sqlbox"><textarea id="rsql" spellcheck="false" aria-label="Requête SQL"></textarea><button id="rrun" title="Relancer la requête (⌘ Entrée)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></button></div>
+        <div class="rmeta" id="rmeta"></div>
+        <div class="rgrid" id="rgrid"></div>
+      </div>
+      <form class="ask" id="ask"><span class="ai">Echo</span>
+        <input id="askt" placeholder="Demande en français (« top 5 clients en octobre »), ou écris du SQL" autocomplete="off">
+        <button type="button" class="ib" id="askmic" aria-label="Parler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+        <button class="ib go" aria-label="Envoyer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
+    </div>
+  </main>
+</div>
+
+<script>
+/* Echo · version statique (GitHub Pages) : un faux serveur qui lit les données figées. Aucune clé, aucune IA en ligne. */
+(() => {
+  const RACINE = location.pathname.includes("/entrepot") ? "../" : "./";
+  const lire = f => fetch(RACINE + "data/" + f).then(r => r.json());
+  const rep = o => new Response(JSON.stringify(o), { headers: { "Content-Type": "application/json" } });
+  const sansAcc = t => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const MOTS = {"ceo": ["ceo", "directrice generale", "directeur general", "pdg"], "daf": ["daf", "financ"], "dircom": ["directrice commerciale", "directeur commercial"], "dirsupply": ["supply", "logistique"], "dirmkt": ["marketing"], "drh": ["drh", "ressources humaines"], "data": ["data analyst", "analyste"], "cdg": ["controle de gestion", "controleuse", "controleur"], "rre": ["region est", "responsable regional"], "rsc": ["service client"], "appro": ["achat", "acheteu", "appro"], "credit": ["credit", "recouvrement"], "kam": ["key account", "grands comptes"], "commerciale": ["commercial", "vente", "sales"], "tech": ["technicien", "support"]};
+  const vrai = window.fetch.bind(window);
+  window.ECHO_STATIQUE = true;
+  window.fetch = async (url, opt = {}) => {
+    const u = new URL(url, location.href);
+    if (!u.pathname.includes("/api/projet-1")) return vrai(url, opt);
+    const q = u.searchParams, qui = (q.get("qui") || "ceo").replace(/[^a-z]/g, "");
+    const corps = opt.body ? JSON.parse(opt.body) : {};
+    if (u.pathname.endsWith("/vue")) return rep(await lire(`vue_${qui}.json`));
+    if (u.pathname.endsWith("/intro")) return rep(await lire(`intro_${qui}.json`));
+    if (u.pathname.endsWith("/presenter")) {
+      const t = sansAcc(corps.texte || ""), ps = (await lire("vue_ceo.json")).personas;
+      let id = (ps.find(p => new RegExp("\\b" + sansAcc(p.nom.split(" ")[0]) + "\\b").test(t)) || {}).id;
+      if (!id) id = Object.keys(MOTS).find(k => MOTS[k].some(m => t.includes(m))) || "ceo";
+      const v = await lire(`vue_${id}.json`); v.intro = (await lire(`intro_${id}.json`)).texte; v.reconnaissance = { id, methode: "page" };
+      return rep(v);
+    }
+    if (u.pathname.endsWith("/chat")) return rep({ reponse: "Ici, c'est la version en ligne : le chat qui modifie le tableau tourne sur le Mac, avec l'IA. Ouvre Echo depuis le Mac pour l'utiliser.", change: false });
+    if (u.pathname.endsWith("/entrepot")) {
+      const cmd = q.get("cmd"), P = (await lire("personas.json")).find(p => p.id === qui);
+      const ouvert = o => !!P && (P.niveau <= o.niveau || (o.aussi || []).includes(P.id));
+      if (cmd === "arbre") { const a = await lire("entrepot_arbre.json"); a.persona = P || null;
+        a.schemas.forEach(s => s.objets.forEach(o => { o.ouvert = ouvert(o); })); return rep(a); }
+      if (cmd === "objet") { const o = await lire(`entrepot_${(q.get("nom") || "").replace(/[^a-z_]/g, "")}.json`); o.ouvert = ouvert(o);
+        if (!o.ouvert) delete o.apercu; (o.etoile || []).forEach(d => { d.ouvert = ouvert(d); }); return rep(o); }
+      if (cmd === "jointures") return rep(await lire("entrepot_jointures.json"));
+    }
+    return rep({ erreur: "indisponible en ligne" });
+  };
+})();
+</script>
+<script>
+const $ = s => document.querySelector(s);
+const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+const API = "/api/projet-1/entrepot";
+const ICO = { table:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg>',
+  vue:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  chev:'<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>',
+  db:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>' };
+let QUI = new URLSearchParams(location.search).get("qui");
+try { QUI = QUI || localStorage.getItem("echo-qui"); } catch (e) {}
+let A = null, O = null, TAB = "donnees", ALL = null;
+const get = async (cmd, extra = "") => (await fetch(`${API}?cmd=${cmd}&qui=${encodeURIComponent(QUI || "")}${extra}`)).json();
+const ROLE = n => `ROLE NIVEAU_${n}`;
+
+function arbre(filtre = "") {
+  const f = filtre.toLowerCase();
+  $("#tree").innerHTML = `<div class="db">${ICO.db}${esc(A.base)}</div>` + A.schemas.map(s => {
+    const os = s.objets.filter(o => !f || o.nom.includes(f));
+    if (!os.length) return "";
+    return `<details class="sch" ${f || ["VENTES", "ANALYTICS"].includes(s.nom) ? "open" : ""}><summary>${ICO.chev}${esc(s.nom)}<em>${os.length}</em></summary>
+      ${os.map(o => `<button class="obj${o.ouvert ? "" : " lk"}${O && O.nom === o.nom ? " on" : ""}" data-n="${o.nom}">${o.ouvert ? ICO[o.type] : ICO.lock}${esc(o.nom)}<em>${o.type === "vue" ? "vue" : o.lignes.toLocaleString("fr-FR")}</em></button>`).join("")}</details>`;
+  }).join("");
+  $("#tree").querySelectorAll(".obj").forEach(b => b.onclick = () => ouvrir(b.dataset.n));
+}
+$("#q").oninput = e => arbre(e.target.value);
+
+async function ouvrir(nom) {
+  O = await get("objet", `&nom=${encodeURIComponent(nom)}`);
+  $("#tree").querySelectorAll(".obj").forEach(b => b.classList.toggle("on", b.dataset.n === nom));
+  $("#crumb").innerHTML = `${esc(A.compte)}<i>›</i>${esc(A.entrepot)}<i>›</i>${esc(A.base)}<i>›</i>${esc(O.schema)}`;
+  $("#head").innerHTML = `<div><h1><span>${esc(A.base)}.${esc(O.schema)}.</span>${esc(O.nom.toUpperCase())}</h1><p>${esc(O.description)}</p>
+    <div class="badges"><span class="bd b">${O.type === "vue" ? "vue" : "table"}</span>${O.role !== "vue" ? `<span class="bd">${esc(O.role)}</span>` : ""}
+    <span class="bd">${O.lignes.toLocaleString("fr-FR")} lignes</span><span class="bd">${O.colonnes.length} colonnes</span>${O.secret ? '<span class="bd s">secret</span>' : ""}${O.ouvert ? "" : '<span class="bd s">verrouillée pour toi</span>'}</div></div>`;
+  $("#tabs").querySelector('[data-t="etoile"]').disabled = false;
+  onglet(TAB);
+  try { history.replaceState(null, "", `?qui=${QUI}&objet=${nom}`); } catch (e) {}
+}
+
+function onglet(t) {
+  TAB = t;
+  [...$("#tabs").querySelectorAll("button")].forEach((b, i) => { const on = b.dataset.t === t; b.setAttribute("aria-selected", on); if (on) $("#thumb").style.transform = `translateX(${i * 100}%)`; });
+  ({ donnees, colonnes, lineage, etoile, jointures })[t]();
+}
+$("#tabs").querySelectorAll("button").forEach(b => b.onclick = () => !b.disabled && onglet(b.dataset.t));
+
+const verrou = () => `<div class="lock"><div>${ICO.lock}<b>Table verrouillée pour ton rôle</b>Ton accès (${ROLE(A.persona.niveau)}) ne couvre pas ${esc(O.nom)}.<br>Les colonnes, le lineage et les jointures restent visibles, pas les données.</div></div>`;
+function donnees() {
+  if (!O.ouvert) { $("#panel").innerHTML = verrou(); return; }
+  $("#panel").innerHTML = `<table class="grid"><thead><tr>${O.colonnes.map(c => `<th>${esc(c.nom.toUpperCase())}<small>${esc(c.type)}</small></th>`).join("")}</tr></thead>
+    <tbody>${O.apercu.map(r => `<tr>${r.map(v => v === null ? '<td class="n">NULL</td>' : `<td>${esc(v)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+function colonnes() {
+  $("#panel").innerHTML = `<div class="cols">${O.colonnes.map(c => { const js = O.jointures.filter(j => (j.a === O.nom && j.col_a === c.nom) || (j.b === O.nom && j.col_b === c.nom));
+    return `<div class="col"><b>${esc(c.nom)}</b><span>${esc(c.type)}</span><div class="lnk">${js.map(j => { const autre = j.a === O.nom ? `${j.b}.${j.col_b}` : `${j.a}.${j.col_a}`;
+      return `<i class="${j.double_sens ? "nn" : ""}">→ ${esc(autre)}</i>`; }).join("")}</div></div>`; }).join("")}</div>
+    ${O.sql ? `<div style="padding:0 16px 16px"><div class="k">Définition de la vue</div><pre class="sql">${esc(O.sql)}</pre></div>` : ""}`;
+}
+function noeud(x, y, nom, cls, sous) {
+  const w = Math.max(120, nom.length * 7.6 + 24);
+  return `<g class="nd ${cls}" data-n="${nom}"><rect x="${x - w / 2}" y="${y - 19}" width="${w}" height="38" rx="10"/><text x="${x}" y="${y - 2}" text-anchor="middle">${esc(nom)}</text><text class="c" x="${x}" y="${y + 12}" text-anchor="middle">${esc(sous)}</text></g>`;
+}
+const typeDe = n => { for (const s of A.schemas) { const o = s.objets.find(x => x.nom === n); if (o) return o; } return { type:"table", ouvert:true }; };
+function lineage() {
+  const L = O.lineage, prof = Math.max(0, ...L.amont.map(e => e.profondeur));
+  if (!L.amont.length && !L.aval.length) { $("#panel").innerHTML = `<div class="lock"><div>${ICO.vue}<b>Pas de lineage</b>Aucune vue ne lit ${esc(O.nom)}, et ce n'est pas une vue.</div></div>`; return; }
+  const W = 980, H = 420, colX = d => W - 140 - d * ((W - 280) / Math.max(1, prof + (L.aval.length ? 1 : 0))) - (L.aval.length ? (W - 280) / Math.max(1, prof + 1) : 0);
+  const pos = {}, cols = {};
+  pos[O.nom] = [L.aval.length ? W / 2 : W - 140, H / 2];
+  L.amont.forEach(e => (cols[e.profondeur] = cols[e.profondeur] || new Set()).add(e.de));
+  const pasX = (L.aval.length ? W / 2 - 140 : W - 280) / Math.max(1, prof);
+  Object.entries(cols).forEach(([d, set]) => [...set].forEach((n, i, arr) => { if (!pos[n]) pos[n] = [pos[O.nom][0] - d * pasX, H / (arr.length + 1) * (i + 1)]; }));
+  L.aval.forEach((e, i) => pos[e.vers] = [W - 140, H / (L.aval.length + 1) * (i + 1)]);
+  let s = "";
+  [...L.amont, ...L.aval].forEach(e => { const [x1, y1] = pos[e.de], [x2, y2] = pos[e.vers], m = (x1 + x2) / 2;
+    s += `<path class="fl" d="M${x1 + 60} ${y1} C${m} ${y1}, ${m} ${y2}, ${x2 - 60} ${y2}"/>`; });
+  Object.entries(pos).forEach(([n, [x, y]]) => { const o = typeDe(n); s += noeud(x, y, n, (n === O.nom ? "me " : "") + (o.type === "vue" ? "v " : "") + (o.ouvert ? "" : "lk"), o.type === "vue" ? "vue" : "table"); });
+  $("#panel").innerHTML = `<div class="svgw"><div class="note">${L.amont.length ? `${esc(O.nom)} est construite à partir de ${new Set(L.amont.map(e => e.de)).size} objets` : ""}${L.amont.length && L.aval.length ? " · " : ""}${L.aval.length ? `${L.aval.length} vue${L.aval.length > 1 ? "s" : ""} en dépendent` : ""}. Touche un nœud pour l'ouvrir.</div><svg viewBox="0 0 ${W} ${H}">${s}</svg></div>`;
+  $("#panel").querySelectorAll(".nd").forEach(g => g.onclick = () => g.dataset.n !== O.nom && ouvrir(g.dataset.n));
+}
+function etoile() {
+  if (!O.etoile) {
+    const faits = O.jointures.filter(j => j.cardinalite !== "n-n" && ((j.a === O.nom && j.cardinalite === "1-n") || (j.b === O.nom && j.cardinalite === "n-1"))).map(j => j.a === O.nom ? j.b : j.a);
+    $("#panel").innerHTML = `<div class="lock"><div>${ICO.table}<b>${esc(O.nom)} n'est pas une table de faits</b>${faits.length ? `Elle sert de dimension à : ${[...new Set(faits)].map(esc).join(", ")}.<br>Ouvre une de ces tables pour voir son étoile.` : "Elle n'entre dans aucune étoile."}</div></div>`;
+    return;
+  }
+  const W = 900, H = 440, cx = W / 2, cy = H / 2, R = 165, d = O.etoile;
+  let s = "";
+  d.forEach((x, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / d.length, X = cx + Math.cos(a) * R * 1.45, Y = cy + Math.sin(a) * R; x.p = [X, Y];
+    s += `<line class="ed" x1="${cx}" y1="${cy}" x2="${X}" y2="${Y}"/><text x="${(cx + X) / 2}" y="${(cy + Y) / 2 - 6}" text-anchor="middle" style="font:11px var(--mono);fill:var(--blue-ink)">${esc(x.par)}</text>`; });
+  s += noeud(cx, cy, O.nom, "me", "table de faits");
+  d.forEach(x => s += noeud(x.p[0], x.p[1], x.nom, x.ouvert ? "" : "lk", "dimension"));
+  $("#panel").innerHTML = `<div class="svgw"><div class="note">Étoile reconstruite à partir des jointures détectées : chaque dimension est le côté « 1 » d'une jointure n-1.</div><svg viewBox="0 0 ${W} ${H}">${s}</svg></div>`;
+  $("#panel").querySelectorAll(".nd").forEach(g => g.onclick = () => g.dataset.n !== O.nom && ouvrir(g.dataset.n));
+}
+function ligneJ(j) {
+  const nn = j.double_sens;
+  return `<div class="jn"><div class="q"><b>${esc(j.a)}</b>.${esc(j.col_a)}<i>↔</i><b>${esc(j.b)}</b>.${esc(j.col_b)}</div>
+    <div style="display:flex;gap:10px;align-items:center"><span class="card${nn ? " nn" : ""}">${nn ? "n-n · double sens" : esc(j.cardinalite)}</span><span class="conf"><u style="--w:${j.confiance * 100}%"></u>${Math.round(j.confiance * 100)} %</span></div>
+    ${nn ? `<small class="w">Jointure à double sens : les deux côtés se répètent, joindre directement doublerait les chiffres. ${j.pont ? `Passer par la table pont « ${esc(j.pont)} ».` : "Créer une dimension commune avant de joindre."}</small>`
+         : !j.meme_nom ? `<small>Trouvée par les valeurs : les noms de colonnes diffèrent, mais ${Math.round(j.recouvrement * 100)} % des valeurs se retrouvent des deux côtés.</small>`
+         : `<small>${Math.round(j.recouvrement * 100)} % des valeurs se retrouvent des deux côtés.</small>`}</div>`;
+}
+function jointures() {
+  const js = O.jointures, nn = js.filter(j => j.double_sens).length;
+  $("#panel").innerHTML = `<div class="joins"><div class="note" style="padding:10px 0">${js.length} jointures détectées automatiquement en comparant les valeurs (aucune clé n'est déclarée)${nn ? `, dont ${nn} à double sens` : ""}.</div>${js.map(ligneJ).join("")}</div>`;
+}
+$("#allj").onclick = async () => {
+  ALL = ALL || await get("jointures");
+  $("#head").innerHTML = `<div><h1>Jointures détectées</h1><p>Le moteur compare les valeurs de toutes les colonnes de toutes les tables. Il en déduit les jointures possibles, leur sens, et celles à double sens qui demandent une table pont.</p>
+    <div class="badges"><span class="bd b">${ALL.length} jointures</span><span class="bd s">${ALL.filter(j => j.double_sens).length} à double sens</span><span class="bd">${ALL.filter(j => !j.meme_nom).length} trouvées malgré des noms différents</span></div></div>`;
+  $("#panel").innerHTML = `<div class="joins">${ALL.map(ligneJ).join("")}</div>`;
+  [...$("#tabs").querySelectorAll("button")].forEach(b => b.setAttribute("aria-selected", false)); $("#thumb").style.transform = "translateX(400%)";
+};
+
+// ── Chat SQL : demande en français (Haiku écrit la requête) ou SQL direct (0 €), toujours en lecture seule ──
+async function sql(corps) {
+  if (window.ECHO_STATIQUE) { montrer({ explication:"Ici, c'est la version en ligne : le chat SQL tourne sur le Mac, avec l'IA. Ouvre le Snow Warehouse depuis le Mac pour l'utiliser.", lignes:[], colonnes:[] }); return; }
+  $("#dock").classList.add("wait"); $("#rexp").textContent = corps.sql ? "Je lance ta requête" : "Echo écrit la requête"; $("#res").hidden = false; $("#rmeta").textContent = ""; $("#rgrid").innerHTML = "";
+  try {
+    const r = await (await fetch("/api/projet-1/sql", { method:"POST", headers:{ "Content-Type":"application/json", "X-Scientifique":"1", "X-Quartier":"1" },
+      body:JSON.stringify({ qui:QUI, ...corps }) })).json();
+    montrer(r);
+  } catch (e) { montrer({ erreur:"Le Mac ne répond pas, réessaie dans un instant." }); }
+  $("#dock").classList.remove("wait");
+}
+function montrer(r) {
+  $("#res").hidden = false;
+  $("#rexp").textContent = r.explication || (r.erreur ? "La requête n'a pas marché." : "Résultat");
+  $("#rsql").value = r.sql || $("#rsql").value || ""; $(".sqlbox").hidden = !r.sql && !$("#rsql").value;
+  $("#rmeta").className = "rmeta" + (r.erreur ? " err" : "");
+  $("#rmeta").textContent = r.erreur || (r.colonnes && r.colonnes.length ? `${r.lignes.length}${r.plus ? "+" : ""} ligne${r.lignes.length > 1 ? "s" : ""} · ${r.ms ?? 0} ms · lecture seule` : "");
+  $("#rgrid").innerHTML = r.colonnes && r.colonnes.length ? `<table class="grid"><thead><tr>${r.colonnes.map(c => `<th>${esc(c.toUpperCase())}</th>`).join("")}</tr></thead>
+    <tbody>${r.lignes.map(l => `<tr>${l.map(v => v === null ? '<td class="n">NULL</td>' : `<td>${esc(v)}</td>`).join("")}</tr>`).join("")}</tbody></table>` : "";
+}
+$("#ask").onsubmit = e => { e.preventDefault(); const t = $("#askt").value.trim(); if (!t) return; $("#askt").value = "";
+  /^\s*(select|with)\b/i.test(t) ? sql({ sql:t }) : sql({ texte:t }); };
+$("#rrun").onclick = () => sql({ sql:$("#rsql").value });
+$("#rsql").addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); sql({ sql:$("#rsql").value }); } });
+$("#rclose").onclick = () => { $("#res").hidden = true; };
+const SRW = window.SpeechRecognition || window.webkitSpeechRecognition; let RECW = null;
+$("#askmic").onclick = () => {
+  if (!SRW || !isSecureContext) { montrer({ explication:"Le micro n'est pas disponible ici : écris ta demande." }); return; }
+  if (RECW) { RECW.stop(); return; }
+  const r = new SRW(); r.lang = "fr-FR"; r.interimResults = true; RECW = r; $("#askmic").classList.add("live"); let t = "";
+  r.onresult = e => { t = [...e.results].map(x => x[0].transcript).join(" "); $("#askt").value = t; };
+  r.onend = () => { RECW = null; $("#askmic").classList.remove("live"); if (t.trim()) { $("#askt").value = ""; sql({ texte:t.trim() }); } };
+  try { r.start(); } catch (e) { RECW = null; $("#askmic").classList.remove("live"); }
+};
+
+(async () => {
+  if (!QUI) { $("#gate").hidden = false; return; }
+  A = await get("arbre");
+  if (!A.persona) { $("#gate").hidden = false; return; }
+  const p = A.persona;
+  $("#who").innerHTML = `<span class="dot"></span><div class="av">${esc(p.initiales)}</div><div><b>${esc(p.nom)}</b> <small>${ROLE(p.niveau)}</small></div>`;
+  $("#back").href = `../?qui=${p.id}`;
+  arbre();
+  ouvrir(new URLSearchParams(location.search).get("objet") || "ventes");
+})();
+</script>
+</body>
+</html>
